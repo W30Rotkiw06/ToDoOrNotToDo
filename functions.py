@@ -60,7 +60,8 @@ def showData(data, user): # printing todo list in nice way
         print("\n", i, end=".\t")
         for key, value in todo.items():
             if key == "created_at":
-                value = datetime.fromisoformat(value).strftime("%d.%m, %H:%M")
+                try: value = datetime.fromisoformat(value).strftime("%d.%m, %H:%M")
+                except: pass
             elif key == "id": index.append(value)  
             if value != user:
                 print(f"{value}\t", end="")

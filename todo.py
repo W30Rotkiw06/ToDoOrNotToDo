@@ -19,13 +19,13 @@ supabase=create_client(url, key)
 session = None
 os.system("cls")
 
+# Downloading mails of all users
+users = supabase.table("list_of_users").select("user").execute()
+list_of_users = []
+for user in users.data: list_of_users.append(user["user"])
 
 # Logging in or creating new user
-while session == None:
-    users = supabase.table("list_of_users").select("user").execute()
-    list_of_users = []
-    for user in users.data: list_of_users.append(user["user"])
-    
+while session == None: 
     email = enterMail()    
 
     if email in list_of_users: 
@@ -66,15 +66,16 @@ while True:
     if len(indexes) >0:
         print("2 - Delete ToDo")
         options += 1
-
     print("0 - Log out")
 
     choice = checkChoice(options)
 
+    # Inserting new ToDo
     if choice == 1:
         new_todo = input("\nEnter your ToDo:\n").capitalize()
         todos = supabase.table("todos").insert({"name":new_todo, "created_by" : user}).execute()
     
+    # Deleting ToDo
     elif choice == 2:
         print("\nType key of ToDo that you want to delete: ", end="")
         del_choice = checkChoice()
