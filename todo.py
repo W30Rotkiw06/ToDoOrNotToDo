@@ -1,23 +1,27 @@
 # Impotring libaries
 
 import os
-from dotenv import load_dotenv
 from supabase import create_client
 from gotrue.errors import AuthError
 
 from functions import enterMail, enterPassword, checkChoice, showData
 from time import sleep
+from sys import platform
 
 
 # Supabase configuration
-load_dotenv()
-url = os.environ.get("SUPABASE_URL")
-key = os.environ.get("SUPABASE_KEY")
+url = "https://pymxbbtuleqllrnvxvqe.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bXhiYnR1bGVxbGxybnZ4dnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTMxOTk0MjMsImV4cCI6MjAyODc3NTQyM30.OJpVZzwzICyKN2Eq0S2AtXJAIGLGV3OAp8H_MnDgAtM"
 supabase=create_client(url, key)
 
 
+if platform == "darwin":
+    command ="clear"
+else:
+    command ="cls"
+
 session = None
-os.system("cls")
+os.system(command)
 
 # Downloading mails of all users
 users = supabase.table("list_of_users").select("user").execute()
@@ -49,7 +53,7 @@ while True:
 
     # cleaning screan and displaying user
     sleep(0.5)
-    os.system("cls")
+    os.system(command)
     print(f"User: {user}\n")
 
 
@@ -87,7 +91,7 @@ while True:
 
     else: break
 
-os.system("cls")
+os.system(command)
 print("Logging out", end="")
 for i in range(3):
     sleep(0.3)
