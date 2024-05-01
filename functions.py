@@ -1,7 +1,14 @@
 import getpass
 from datetime import datetime
+import requests
 
 tooObviousPasswords = ["12345678", "qwerty", "abcdefgh", "password", "haslo123", ]
+
+def doWeHaveInternet(): # Checking if user has internet connection
+    try:
+        requests.get("https://google.com", timeout=10)
+    except requests.ConnectionError: return False
+    else: return True
 
 def enterMail(input_text="Enter your email: "): # checking if provided "mail" is mail
     while True:

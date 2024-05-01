@@ -4,42 +4,50 @@ import os
 from supabase import create_client
 from gotrue.errors import AuthError
 
-from functions import enterMail, enterPassword, checkChoice, showData
+from functions import doWeHaveInternet, enterMail, enterPassword, checkChoice, showData
 from time import sleep
 from sys import platform
 
+# checking platform
+if platform == "win32":
+    command = "cls"
+else:
+    command = "clear"
+
+os.system(command)
+
+# Checking internet connection
+internet = doWeHaveInternet()
+if internet == False: 
+    print("You are offline :=(")
+    exit()
 
 # Supabase configuration
 url = "https://pymxbbtuleqllrnvxvqe.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bXhiYnR1bGVxbGxybnZ4dnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTMxOTk0MjMsImV4cCI6MjAyODc3NTQyM30.OJpVZzwzICyKN2Eq0S2AtXJAIGLGV3OAp8H_MnDgAtM"
 supabase=create_client(url, key)
-
-
-if platform == "darwin":
-    command ="clear"
-else:
-    command ="cls"
-
 session = None
-os.system(command)
+
 
 # Downloading mails of all users
 users = supabase.table("list_of_users").select("user").execute()
-list_of_users = []
+list_of_users, attempts = [], 0
 for user in users.data: list_of_users.append(user["user"])
 
 # Logging in or creating new user
+email = enterMail()    
 while session == None: 
-    email = enterMail()    
-
     if email in list_of_users: 
         password = enterPassword(one_password=True)
 
         try: session = supabase.auth.sign_in_with_password({ "email": email, "password": password})
         except AuthError:
-            print("Your password or mail is incorrect")
+            attempts += 1
+            print(f"Your password is incorrect, {3-attempts} attempts left")
         else: print("Logged succesfully")
-
+        if attempts >= 3:
+            print("Login failed")
+            exit()
     else:
         print("You need to create new account\n")
         password = enterPassword()
@@ -89,12 +97,11 @@ while True:
         else: print("Error, key not found")
         sleep(0.4)
 
-    else: break
+    else:
+        os.system(command)
+        print("Logging out", end="")
+        for i in range(3):
+            sleep(0.3)
+            print(".", end="")
 
-os.system(command)
-print("Logging out", end="")
-for i in range(3):
-    sleep(0.3)
-    print(".", end="")
-
-session = supabase.auth.sign_out()
+        session = supabase.auth.sign_out()
