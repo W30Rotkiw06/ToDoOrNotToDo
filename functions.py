@@ -1,18 +1,25 @@
+# Impotring libaries
 import getpass
 from datetime import datetime
+from supabase import create_client
 import requests
 
 tooObviousPasswords = ["12345678", "qwerty", "abcdefgh", "password", "haslo123", ]
 
 def doWeHaveInternet(): # Checking if user has internet connection
     try:
-        requests.get("https://google.com", timeout=10)
+        requests.get("https://google.com", timeout=5)
     except requests.ConnectionError: return False
     else: return True
 
+def config(): # Supabase configuration
+    url = "https://pymxbbtuleqllrnvxvqe.supabase.co"
+    key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bXhiYnR1bGVxbGxybnZ4dnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTMxOTk0MjMsImV4cCI6MjAyODc3NTQyM30.OJpVZzwzICyKN2Eq0S2AtXJAIGLGV3OAp8H_MnDgAtM"
+    return create_client(url, key)
+
 def enterMail(input_text="Enter your email: "): # checking if provided "mail" is mail
     while True:
-        mail = input(input_text).lower()
+        mail = input(input_text).lower().strip()
         at = 0
         dot = 0
         for char in mail[3:]:
@@ -20,13 +27,12 @@ def enterMail(input_text="Enter your email: "): # checking if provided "mail" is
         for char in mail[-4:]:
             if char == ".": dot +=1
         if at == 1 and dot ==1: return mail
-        else: print(f"Your mail is not correct!")
+        else: print(f"Your mail is  incorrect!")
 
 # checking if created password is long enough and checking if passwords provided are the same
 def enterPassword(input_text="Please enter your password: " ,min_len=8, one_password=False):
     if one_password==False:
-        print("To increase Your safety, password is hidden.")
-        print(f"Your password must be at least {min_len} chars long")
+        print(f"To increase Your safety, password is hidden. Password must be at least {min_len} chars long")
     while True:
         print(input_text, end="")
         password = getpass.getpass("")
@@ -58,11 +64,12 @@ def checkChoice(max=0): # checking if user gave int and is it in <0, max>
             elif max == 0: return x
             else: print("Not found")
 
-def showData(data, user): # printing todo list in nice way
-    i = 0
-    index = []
+def showData(data, user, show_done=True): # printing todo list in nice way
+    i,index = 0, []
     for todo in data:
         if todo["created_by"] != user: continue
+        if show_done == False:
+            if todo["is_done"] == True: continue
         i += 1
         print("\n", i, end=".\t")
         for key, value in todo.items():
@@ -70,8 +77,11 @@ def showData(data, user): # printing todo list in nice way
                 try: value = datetime.fromisoformat(value).strftime("%d.%m, %H:%M")
                 except: pass
             elif key == "id": index.append(value)  
-            if value != user:
-                print(f"{value}\t", end="")
+            if key == "is_done":
+                value = bool(value)
+                if value == True: value = "\u2714"
+                else: value = "X"
+            if value != user: print(f"{value}\t", end="")
     if i ==0: print("\n\n\tYour ToDo list is empty\n\t\t   :-(")
     return index
        
