@@ -4,6 +4,7 @@ from gotrue.errors import AuthError
 from functions import doWeHaveInternet, config, enterMail, enterPassword, checkChoice, showData
 from time import sleep
 from sys import platform
+from datetime import datetime, timezone
 
 session, list_of_users, attempts, show_done = None, [], 0, True # Useful vars
 
@@ -60,18 +61,19 @@ while True:
 
         
     # choice of actions
-    options = 4 # n-1
+    options = 5 # n-1
     print("\n\nWhat do you want to do? Type:")
     print("1 - Add new ToDo")
-    print("2 - Mark ToDO as done/undone")
-    print("3 - Rename ToDo")
-    print("4 - ", end='')
-    if show_done == True: print("Hide ToDos marked as done")
-    else: print("Show ToDos marked as done")
+    
 
     if len(indexes) >0:
+        print("2 - Mark ToDO as done/undone")
+        print("3 - Rename ToDo")
+        print("4 - ", end='')
+        print("Hide" ,end=' ') if show_done == True else print("Show", end=' ')
+        print("ToDos marked as done")
         print("5 - Delete ToDo")
-        options += 1
+    else: options = 1
     print("0 - Log out")
 
     choice = checkChoice(options)
@@ -100,8 +102,9 @@ while True:
         print("\nType key of ToDo that you want to rename: ", end="")
         mark_choice = checkChoice()
         if mark_choice in indexes:
-                todos = supabase.table("todos").update({"name": input("\nEnter your new ToDo:\n")}).eq("id", mark_choice).execute()
+                todos = supabase.table("todos").update({"created_at": datetime.now(timezone.utc).isoformat(),"name": input("\nEnter your new ToDo:\n"), "is_done": False}).eq("id", mark_choice).execute()
                 print("Renamed succesfuly")
+                
         else: print("Error, key not found")
         sleep(0.4)
 
