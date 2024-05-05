@@ -18,7 +18,7 @@ def createWindow():
         def check_password():
             def destroyWin():
                 window.withdraw()
-                main_window(session)
+                main_window(session,supabase)
 
             
                 
