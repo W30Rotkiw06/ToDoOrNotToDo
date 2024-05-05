@@ -20,6 +20,7 @@ def config(): # Supabase configuration
     key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bXhiYnR1bGVxbGxybnZ4dnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTMxOTk0MjMsImV4cCI6MjAyODc3NTQyM30.OJpVZzwzICyKN2Eq0S2AtXJAIGLGV3OAp8H_MnDgAtM"
     return create_client(url, key)
 
+
 def enterMail(input_text="Enter your email: "): # checking if provided "mail" is mail
     while True:
         mail = input(input_text).lower().strip()
