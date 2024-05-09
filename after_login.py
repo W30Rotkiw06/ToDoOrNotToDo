@@ -2,8 +2,6 @@ from tkinter import *
 from datetime import datetime, timezone
 import pytz
 
-from functions import config
-
 def main_window(session, supabase):
 
 
@@ -17,6 +15,7 @@ def main_window(session, supabase):
     def showData(window, data, user, show_done=True): # printing todo list in nice way
         global rows, geometry
         column, row, rows = 0, 1, 0
+        # Creating table header
         todo_names, todo_times, todo_boxes, values_boxes = [], [], [], []
         tab = Label(tab_frame, text="DONE").grid(row=row, column=0, sticky="nsew", )
         tab = Label(tab_frame, text="DATE").grid(row=row, column=1, sticky="nsew", )
@@ -24,6 +23,7 @@ def main_window(session, supabase):
         tab  = Label(tab_frame, text="SAVE").grid(row=row, column=3, sticky="nsew", )
         tab  = Label(tab_frame, text="").grid(row=row, column=4, sticky="nsew", )
 
+        # setting size of collums
         tab_frame.grid_columnconfigure(0, minsize=5)
         tab_frame.grid_columnconfigure(1, minsize=145)
         tab_frame.grid_columnconfigure(2, minsize=185)
@@ -39,7 +39,7 @@ def main_window(session, supabase):
             todo_times[row-2].config(text=date_with_timezone)
             todos.execute()
 
-        def delete(row, todo):
+        def delete(row, todo): # deleting row both on screen and in supabase
             global rows, geometry
             key = todo["id"]
             # Delete row in table 
@@ -66,6 +66,7 @@ def main_window(session, supabase):
             todos = supabase.table("todos").update({"is_done" :updated_value}).eq("id", key)
             todos.execute()
         
+        # adding new empty ToDo and refreshing window
         def addNewToDo(row):
             todos = supabase.table("todos").insert({"created_at" : datetime.now(timezone.utc).isoformat(),"name":"", "created_by" : user}).execute()
             window.destroy()
@@ -77,8 +78,8 @@ def main_window(session, supabase):
         add_button.pack()
         """log_out_button = Button"""
         
+        # showing table with todos
         for todo in data:
-            
 
             column = 0
             if todo["created_by"] != user: continue
@@ -98,22 +99,22 @@ def main_window(session, supabase):
                     if values_boxes[row-2].get() == True: todo_boxes[row-2].select()
                     else: todo_boxes[row-2].deselect()
 
-
-
-
                 elif key == "created_at": 
                     try: value = formatDate(value)
                     except: value = "XX:XX @ XX:XX"
                     todo_times.append(Label(tab_frame, text=value))
                     todo_times[row-2].grid(row=row, column=column,)
+
                 elif key != "name":
                     tab = Label(tab_frame, text=value)
                     tab.grid(row=row, column=column,)
+
                 else: 
                     todo_names.append(Entry(tab_frame, border=1, width=30))
                     todo_names[row-2].insert(index=0, string=value)
                     todo_names[row-2].grid(row=row, column=column,)
                 column += 1
+
             accept_button =  Button(tab_frame, text="✅", command= lambda row =row , todo= todo:  accept(row, todo))
             accept_button.grid(row=row, column=column)
             column += 1
@@ -127,7 +128,7 @@ def main_window(session, supabase):
         window.geometry(geometry)
 
     
-
+    # Creating window ans settings it's size
     window = Tk(className="ToDo || !ToDO")
     geometry = f"450x120"
     window.geometry(geometry)
@@ -142,13 +143,9 @@ def main_window(session, supabase):
     bottom_frame = Frame(window)
     bottom_frame.pack()
 
-    
-
     todos = supabase.table("todos").select("id, is_done, created_at, name, created_by").execute()
     showData(window, todos.data, session.user.email)
 
     window.mainloop()
 
-if __name__ == "__main__":
-    supabase = config()
-    main_window(supabase.auth.sign_in_with_password({ "email": "wiktor.w306@gmail.com", "password": "WikWie123"}), supabase)
+if __name__ == "__main__": print("Open main.py")
