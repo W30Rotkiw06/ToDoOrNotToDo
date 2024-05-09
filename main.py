@@ -3,7 +3,6 @@ from tkinter import *
 from functions import doWeHaveInternet, config
 from gotrue.errors import AuthError
 from after_login import main_window
-import os
 
 # I hate tkinter
 
@@ -19,6 +18,7 @@ def createWindow():
             def destroyWin():
                 window.withdraw()
                 main_window(session,supabase)
+                exit()
 
             
                 
@@ -46,7 +46,7 @@ def createWindow():
                     enter_mail_lbl.config(text="Your password is incorrect", foreground="red")
                     pass1_ent.delete(0,END)
                 else:
-                    enter_mail_lbl.config(text="Logged succesfuly", foreground="green")
+                    enter_mail_lbl.config(text="Logged succesfuly", foreground="green", )
                     
 
                     window.after(100, destroyWin)
@@ -61,19 +61,17 @@ def createWindow():
         if at == 1 and dot ==1:
             
 
-            enter_mail_lbl.config(text="Good, now enter your password", foreground="green")
-            pass1_ent = Entry(frame, show="*")
+            enter_mail_lbl.config(text="Good, now enter your password", foreground="black")
+            pass1_ent = Entry(frame, show="*", width=30)
             pass1_ent.pack()
             
 
-            os.system("clear")
             button.destroy()
             
 
             mail_ent.destroy()
-            button_pass = Button(frame, text="Sign In", background="blue", command=check_password)
+            button_pass = Button(frame, text="Sign In", background="green",  foreground="white", command=check_password)
             button_pass.pack()
-            print("check")
 
             if mail not in list_of_users: 
                 button_pass.config(text="Sign Up")
@@ -86,6 +84,7 @@ def createWindow():
     
     # Creating window
     window = Tk(className="Login | ToDo || !ToDO")
+    window.resizable(False, False)
     frame = Frame(window).pack(fill=X)
 
     window.geometry("250x80")
@@ -112,10 +111,10 @@ def createWindow():
     enter_mail_lbl = Label(frame, text=mail_text)
     enter_mail_lbl.pack()
 
-    mail_ent = Entry(frame)
+    mail_ent = Entry(frame, width=30)
     mail_ent.pack()
 
-    button = Button(frame, text="Continue", background="blue", command=input_mail)
+    button = Button(frame, text="Continue", background="green", foreground="white", command=input_mail)
     button.pack()
 
 
